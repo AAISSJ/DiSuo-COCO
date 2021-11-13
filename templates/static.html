@@ -1,0 +1,263 @@
+<!-- Add your content of head and header -->
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width,initial-scale=1" name="viewport">
+  <meta content="description" name="description">
+  <meta name="google" content="notranslate" />
+  <meta content="Mashup templates have been developped by Orson.io team" name="author">
+
+  <!-- Disable tap highlight on IE -->
+  <meta name="msapplication-tap-highlight" content="no">
+  
+  <link href="./assets/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="./assets/favicon.ico" rel="icon">
+
+  <title>디.수.오-static ver</title>  
+
+<link href="{{ url_for('static', filename='css/main.97292821.css')}}" rel="stylesheet"></head>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            </div>
+      
+            <div class="navbar-collapse">
+              <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <ul class="nav navbar-nav navbar-right">
+                  <li><a href='{{ url_for("index")}}' title="" class="anchor-link">HOME</a></li>
+                  <!-- <li>
+                      <p>
+                          <a href="./components.html" class="btn btn-default navbar-btn" >Components</a>
+                      </p>
+                  </li> -->
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+
+<!-- Add your site or app content here -->
+<div class="background-image-container white-text-container" style="background-image: url('/static/images/img-08.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1><a herf='{{ url_for("index")}}'>DiSuO</a></h1>
+                <p class="">비대면 수업과 재택 근무로 인해, <br> 책상 앞에 앉아 있는 시간이 길어진 여러분들을 위한 <br> 자세 교정 알림 서비스입니다.</p>
+                <!-- <a href="#contact-section-container" class="btn btn-primary btn-lg anchor-link" title="">Get in touch</a> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-12 section-container-spacer">
+                <h2 class="text-center">Static Version</h2>
+                <p class="text-center">Static Version은 사진을 업로드 이용하여 사용자의 자세를 분석해 주는 모드입니다. 사용자의 허리와 목 그리고 어깨의 자세를 분석항 올바른 지를 판단해 줍니다. 업로드 한 사진의 자세가 올바르지 않는 경우, 해당 자세에 대한 안내 문구를 띄워줍니다. 또한 올바르지 않은 자세에 따른 맞춤 자세 교정 동영상을 추천해 줍니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- url('static/images/img-02.jpg') -->
+
+<div class="section-container section-half-background-image-container">
+    <div class="image-column-1" style="background-image: url({{file_path}}) "></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-6 text-column">
+                <h2>Pose Analysis</h2>
+                
+                {% if result==None %}
+                    <h3>아래 이미지 업로드를 통해 자세를 측정해보세요! (가능한 확장자: jpg, png, gif)</h3>
+                {% else %}
+
+                    <h3>Your Shoulder</h3>
+                    {% if ("'shoulder1': 0" in result) %}
+                        <p> 어깨가 제대로 측정되지 않았습니다. <br></p>
+                    {% elif ("'shoulder1': 1" in result) %}
+                        <p> 어깨가 올바릅니다. <br></p>
+                    {% elif ("'shoulder1': 2" in result) %}
+                        <p> 코에서부터 각 어깨까지의 각도가 120도 이상으로, 어깨가 구부정합니다. <br></p>
+                    {% endif %}
+
+                    {% if ( " 'shoulder2': 0" in result) %}
+                        <p> 어깨가 제대로 측정되지 않았습니다. <br></p>
+                    {% elif ("'shoulder2': 1" in result) %}
+                        <p> 어깨가 올바릅니다. <br></p>
+                    {% elif ("'shoulder2': 2" in result) %}
+                        <p> 양쪽 어깨가 지면을 기준으로 30도 이상 기울어졌습니다. <br></p>
+                    {% endif %}
+                    
+                    <h3>Your Waist</h3>
+
+                    {% if ("'waist1': 0" in result) %}
+                        <p> 허리가 제대로 측정되지 않았습니다. <br></p>
+                    {% elif ("'waist1': 1" in result)  %}
+                        <p> 허리가 올바릅니다. <br></p>
+                    {% elif ("'waist1': 2" in result)  %}
+                        <p> 허리가 몸의 축으로부터 45도 이상 기울어졌습니다. <br></p>
+                    {% endif %}
+
+
+                    {% if ("'waist2': 0" in result)  %}
+                        <p> 허리가 제대로 측정되지 않았습니다. <br></p>
+                    {% elif ("'waist2': 1" in result)  %}
+                        <p> 허리가 올바릅니다. <br></p>
+                    {% elif ("'waist2': 2" in result) %}
+                        <p> 허리가 지면을 기준으로 30도 이상 기울어졌습니다. <br></p>
+                    {% endif %}
+
+
+                    <h3>Your Neck</h3>
+
+                    {% if ("'neck': 0" in result)  %}
+                        <p> 목이 제대로 측정되지 않았습니다. <br></p>
+                    {% elif("'neck': 1" in result)  %}
+                        <p> 목이 올바릅니다. <br></p>
+                    {% elif ("'neck': 2" in result)  %}
+                        <p> 목이 양쪽 어깨를 이은 선을 기준으로 45도 이상 기울어졌습니다. <br></p>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if result!=None %}
+<div class="section-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-12 section-container-spacer">
+                <h2 class="text-center">Custom Stretch for you</h2>
+            </div>
+        </div>
+        <div class="row">
+
+            {% if ("'waist1': 2" in result)  %}
+            <div class="col-xs-12 col-md-3">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/o0rCwgtBIPM" title="YouTube video player" class="img-responsive"  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <h3 class="text-center">허리 축 기울어짐</h3>
+            </div>
+            {% endif %}
+
+            {% if ("'waist2': 2" in result)  %}
+            <div class="col-xs-12 col-md-3">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/o0rCwgtBIPM" title="YouTube video player" class="img-responsive"  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <h3 class="text-center">골반 비대칭</h3>
+            </div>
+            {% endif %}
+
+            {% if ("'shoulder1': 2" in result) %}
+            <div class="col-xs-12 col-md-3">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/FMOISIlhLEY" title="YouTube video player" class="img-responsive" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <h3 class="text-center">굽은 어깨 + 거북목 </h3>
+            </div>
+            {% endif %}
+
+            {% if ("'shoulder2': 2" in result) %}
+            <div class="col-xs-12 col-md-3">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/FMOISIlhLEY" title="YouTube video player" class="img-responsive" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <h3 class="text-center">어깨 비대칭</h3>
+            </div>
+            {% endif %}
+
+            {% if ("'neck': 2" in result)  %}
+            <div class="col-xs-12 col-md-3">                
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/E0rugjm7gkY" title="YouTube video player" class="img-responsive" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <h3 class="text-center">목 기울어짐</h3>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="section-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-12 section-container-spacer">
+                <h2 class="text-center">Image Upload</h2>
+                <form action="http://localhost:5000/uploader" style=" width: 300px; margin: 0 auto;" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file" />
+                    <input type="submit" >
+                </form>
+            
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function (event) {
+    
+  googleMapInit(); 
+  scrollToAnchor();
+  scrollRevelation('reveal');
+});
+</script>
+
+<footer class="footer-container white-text-container">
+    <div class="container">
+        <div class="row">
+                <div class="col-md-6">
+                    <h4>About us</h4>
+                    <p>Sungkyunkwan University. College of Computing and Informatics. Department of Applied Artificial Intelligence. COCO DiSuO Project Team.</p>
+                </div>
+
+                <div class="col-md-6">
+                    <h4>Do you like ? Share this !</h4>
+                    <div>
+                        <p>
+                            <a href="https://www.twitter.com" class="fa-icon" title="">
+                        <i class="fa fa-twitter" aria-hidden="true"></i>
+                        </a>
+                            <a href="https://www.facebook.com" class="fa-icon" title="">
+                                <i class="fa fa-facebook" aria-hidden="true"></i>
+                            </a>
+                            <a href="https://www.linkedin.com" class="fa-icon" title="">
+                                <i class="fa fa-linkedin" aria-hidden="true"></i>
+                            </a>
+                        </p>
+                    </div>
+                    <div>
+                        <p><small>© DiSuO | Website created with <a href="http://www.mashup-template.com/" title="Create website with free html template">Mashup Template</a>/<a href="https://www.unsplash.com/" title="Beautiful Free Images">Unsplash</a></small></p>
+                    </div>
+
+                </div>
+
+        </div>
+    </div>
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function (event) {
+  navbarToggleSidebar();
+});
+</script>
+
+
+<script type="text/javascript" src= "{{ url_for('static', filename='js/main.faaf51f9.js')}}"  ></script>
+
+</body>
+</html>

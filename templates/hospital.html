@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width,initial-scale=1" name="viewport">
+  <meta content="description" name="description">
+  <meta name="google" content="notranslate" />
+  <meta content="Mashup templates have been developped by Orson.io team" name="author">
+
+  <!-- Disable tap highlight on IE -->
+  <meta name="msapplication-tap-highlight" content="no">
+  
+  <link href="./assets/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="./assets/favicon.ico" rel="icon">
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=104a887d130df336fe5967d4d100bd83&libraries=services"></script>
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=104a887d130df336fe5967d4d100bd83&libraries=services,clusterer,drawing"></script>  
+  <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
+  <!-- <script src="table.js"></script> -->
+
+  <title>디.수.오-병원 검색</title>  
+
+<link href="{{ url_for('static', filename='css/main.97292821.css')}}" rel="stylesheet"></head>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            </div>
+      
+            <div class="navbar-collapse">
+              <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <ul class="nav navbar-nav navbar-right">
+                  <li><a href="{{ url_for('index')}}" title="" class="anchor-link">HOME</a></li>
+                  <!-- <li>
+                      <p>
+                          <a href="./components.html" class="btn btn-default navbar-btn" >Components</a>
+                      </p>
+                  </li> -->
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </header>
+    <!-- Add your site or app content here -->
+    <div class="background-image-container white-text-container" style="background-image: url('/static/images/img-08.jpg')">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h1> <a href='{{ url_for("index")}}'> DiSuO</a></h1>
+                    <p class="">비대면 수업과 재택 근무로 인해, <br> 책상 앞에 앉아 있는 시간이 길어진 여러분들을 위한 <br> 자세 교정 알림 서비스입니다.</p>
+                    <!-- <a href="#contact-section-container" class="btn btn-primary btn-lg anchor-link" title="">Get in touch</a> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-container">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 section-container-spacer">
+                    <h2 class="text-center">내 주변 자세 교정 병원 검색하기</h2>
+                    <p class="text-center">나의 주소를 입력하면 가까운 자세 교정 병원들을 검색할 수 있습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-container">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 section-container-spacer">
+                    <h2 class="text-center">나의 주소 입력</h2>
+                    <form action="http://localhost:5000/address" style=" width: 300px; margin: 0 auto;" method="POST" enctype="multipart/form-data">
+                        우편번호 : <input type="text" name="zip" style="width:80px; height:26px;" />
+                        <button type="button" style="width:60px; height:32px;" onclick="openZipSearch()">검색</button><br>
+                        주소 : <input type="text" name="addr1" style="width:300px; height:30px;" readonly /><br>
+                        상세 : <input type="text" name="addr2" style="width:300px; height:30px;" /><br>
+                        <!-- <button type="button" style="width:60px; height:32px;" onclick="sendAddress()">찾기</button><br> -->
+                    </form>
+                
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="map" style="width:100%;height:400px;"></div><br><br>
+
+    <div class="section-container">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 section-container-spacer">
+                    <h2 class="text-center">내 주변 자세 교정 병원</h2>
+                    <!-- <button id='reload' type="button">reload</button> -->
+                    <table  class="table">
+                        <tr>
+                            {% for header in headings %}
+                                <th class="text-center">{{ header }}</th>
+                            {% endfor %}
+                        </tr>
+                
+                        {% if data %}
+                            {% for row in data%}
+                                <tr>
+                                    {% for cell in row %}
+                                        <td class="text-center">{{cell}}</td>
+                                    {% endfor%}
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                        
+
+                        <tbody id="my-tbody"></tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function (event) {
+            
+        //   googleMapInit(); 
+          scrollToAnchor();
+          scrollRevelation('reveal');
+        });
+
+        var address='서울';
+        function openZipSearch() {
+                new daum.Postcode({
+                    oncomplete: function(data) {
+                        $('[name=zip]').val(data.zonecode); // 우편번호 (5자리)
+                        $('[name=addr1]').val(data.address);
+                        $('[name=addr2]').val(data.buildingName);
+
+                        address=data.address;
+                        const URL = '/search_hospital'
+                        const xhr = new XMLHttpRequest();
+                        sender = JSON.stringify([data.sido,data.sigungu,data.bname ])
+                        xhr.open('POST', URL);
+                        xhr.send(sender);
+
+
+                        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                            mapOption = {
+                                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                                level: 3 // 지도의 확대 레벨
+                            };  
+
+                        // 지도를 생성합니다    
+                        var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+                        // 주소-좌표 변환 객체를 생성합니다
+                        var geocoder = new kakao.maps.services.Geocoder();
+
+                        // 주소로 좌표를 검색합니다
+                        geocoder.addressSearch(address, function(result, status) {
+
+                            // 정상적으로 검색이 완료됐으면 
+                            if (status === kakao.maps.services.Status.OK) {
+
+                                var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+                                // 결과값으로 받은 위치를 마커로 표시합니다
+                                var marker = new kakao.maps.Marker({
+                                    map: map,
+                                    position: coords
+                                });
+
+                                // 인포윈도우로 장소에 대한 설명을 표시합니다
+                                var infowindow = new kakao.maps.InfoWindow({
+                                    content: '<div style="width:150px;text-align:center;padding:6px 0;">내 위치</div>'
+                                });
+                                infowindow.open(map, marker);
+
+                                // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+                                map.setCenter(coords);
+
+                                $(document).ready(function () {
+                                    $("#my-tbody").load("./static/html_file.html", function () {
+                                    //페이지 별로 다른 메뉴 css 적용도 가능
+                                        // document.getElementById("sub_nav").classList.add("show");
+                                    });
+                                })
+
+                                jQuery(function($) {  
+                                    $("#my-tbody").load("./static/html_file.html");  
+                                    });  
+                                
+
+                            }
+
+                        });   
+
+                    }
+                }).open();
+            }
+
+        
+            
+        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+            mapOption = {
+                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                level: 3 // 지도의 확대 레벨
+            };  
+
+        // 지도를 생성합니다    
+        var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+        // 주소-좌표 변환 객체를 생성합니다
+        var geocoder = new kakao.maps.services.Geocoder();
+
+        // 주소로 좌표를 검색합니다
+        geocoder.addressSearch(address, function(result, status) {
+
+            // 정상적으로 검색이 완료됐으면 
+            if (status === kakao.maps.services.Status.OK) {
+
+                var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+                // 결과값으로 받은 위치를 마커로 표시합니다
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    position: coords
+                });
+
+                // 인포윈도우로 장소에 대한 설명을 표시합니다
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: '<div style="width:150px;text-align:center;padding:6px 0;">기본 설정 위치</div>'
+                });
+                infowindow.open(map, marker);
+
+                // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+                map.setCenter(coords);
+            } 
+        });    
+        jQuery(function($) {
+        $('#reload').on('click',function(){
+            $("#my-tbody").reload("./static/html_file.html"); 
+        })
+    });
+
+</script>
+
+
+    <!-- <script>
+        function sendAddress(){
+            const URL = '/search_hospital'
+            const xhr = new XMLHttpRequest();
+            sender = JSON.stringify([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+            xhr.open('POST', URL);
+            xhr.send(sender);
+        }
+    </script> -->
+
+<!-- <script>
+    function openZipSearch() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    $('[name=zip]').val(data.zonecode); // 우편번호 (5자리)
+                    $('[name=addr1]').val(data.address);
+                    $('[name=addr2]').val(data.buildingName);
+                }
+            }).open();
+        }
+
+    function postData() {
+        $.ajax({
+            type: "POST",
+            url: "/result",
+            contentType: "application/json",
+            data: JSON.stringify(getSelected()),
+            dataType: "json",
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+    })
+}
+</script>    -->
+
+
+        <footer class="footer-container white-text-container">
+            <div class="container">
+                <div class="row">
+                        <div class="col-md-6">
+                            <h4>About us</h4>
+                            <p>Sungkyunkwan University. College of Computing and Informatics. Department of Applied Artificial Intelligence. COCO DiSuO Project Team.</p>
+                        </div>
+        
+                        <div class="col-md-6">
+                            <h4>Do you like ? Share this !</h4>
+                            <div>
+                                <p>
+                                    <a href="https://www.twitter.com" class="fa-icon" title="">
+                                <i class="fa fa-twitter" aria-hidden="true"></i>
+                                </a>
+                                    <a href="https://www.facebook.com" class="fa-icon" title="">
+                                        <i class="fa fa-facebook" aria-hidden="true"></i>
+                                    </a>
+                                    <a href="https://www.linkedin.com" class="fa-icon" title="">
+                                        <i class="fa fa-linkedin" aria-hidden="true"></i>
+                                    </a>
+                                </p>
+                            </div>
+                            <div>
+                                <p><small>© DiSuO | Website created with <a href="http://www.mashup-template.com/" title="Create website with free html template">Mashup Template</a>/<a href="https://www.unsplash.com/" title="Beautiful Free Images">Unsplash</a></small></p>
+                            </div>
+        
+                        </div>
+        
+                </div>
+            </div>
+        </footer>
+        
+        <script>
+        document.addEventListener("DOMContentLoaded", function (event) {
+          navbarToggleSidebar();
+        });
+        </script>
+        
+        
+        <script type="text/javascript" src= "{{ url_for('static', filename='js/main.faaf51f9.js')}}"  ></script>
+        
+    </body>
+</html>
